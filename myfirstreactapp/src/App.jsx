@@ -1,15 +1,19 @@
 
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import './App.css';
 import Header from './Header';
 import Footer from './Footer';
 import Employees from './Employees';
+import GroupedTeamMembers from './GroupedTeamMembers';
+import Nav from './Nav';
+import NotFound from './NotFound';
 
 function App() {
 
-  const [selectedTeam, setTeam] = useState("TeamB")
+  const [selectedTeam, setTeam] = useState(JSON.parse(localStorage.getItem('selectedTeam')) || "TeamB")
 
-  const [employees, setEmployees] = useState([{
+  const [employees, setEmployees] = useState(JSON.parse(localStorage.getItem('employeeList')) || [{
       id: 1,
       fullName: "Kwassi Adu Bediako",
       designation: "JavaScript Developer",
@@ -92,7 +96,27 @@ function App() {
       designation: "Graphic Designer",
       gender: "male",
       teamName: "TeamD"
-    }])
+    }]);
+
+    /* 
+      The useEffect will run only when the state of [employees] changes.
+      When the state changes we are updating the employees array in the 
+      local storage
+     */
+    useEffect(() => {
+    
+      localStorage.setItem('employeeList',JSON.stringify(employees))
+      
+
+    },[employees]);
+
+    useEffect(() => {
+    
+      localStorage.setItem('selectedTeam',JSON.stringify(selectedTeam))
+
+    },[selectedTeam]);
+
+    /**------------------------- */
 
     const handleTeamSelectionChange = (event) => {
       setTeam(event.target.value)
@@ -110,16 +134,33 @@ function App() {
     <div className="App">
       <header className="App-header">
         
-          <Header selectedTeam={selectedTeam}
-                  teamMemberCount={employees.filter((employee) => employee.teamName === selectedTeam).length}
-          />
-         <Employees employees={employees}
-                    selectedTeam={selectedTeam}
-                    handleEmployeeCardClick={handleEmployeeCardClick}
-                    handleTeamSelectionChange={handleTeamSelectionChange}
-         />
-          <Footer />
-          
+          <Router>
+              <Nav />
+
+              <Header selectedTeam={selectedTeam}
+                      teamMemberCount={employees.filter((employee) => employee.teamName === selectedTeam).length}
+              />
+
+              <Routes>
+                <Route path = "/"
+                    element={
+                      <Employees employees={employees}
+                                 selectedTeam={selectedTeam}
+                                 handleEmployeeCardClick={handleEmployeeCardClick}
+                                 handleTeamSelectionChange={handleTeamSelectionChange}/>
+                    }>   
+
+                </Route>
+                <Route path="/GroupedTeamMembers" element={<GroupedTeamMembers employees = {employees} 
+                                                                               selectedTeam = {selectedTeam} 
+                                                                               setTeam = {setTeam} />
+                                                           }>
+                </Route>
+                <Route path="*" element={<NotFound/>}></Route>
+              </Routes>
+              
+              <Footer />
+          </Router>
          
       </header>
     </div>

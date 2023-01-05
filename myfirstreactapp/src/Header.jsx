@@ -1,4 +1,4 @@
-
+import React from 'react';
 
 const Header = ({selectedTeam, teamMemberCount}) => {
     return(
@@ -6,7 +6,7 @@ const Header = ({selectedTeam, teamMemberCount}) => {
             <div className="row justify-content-center mt-3 mb-4">
                 <div className="col-8">
                     <h1 className='mt-4 p5 bg-primary text-white rounded'>Team Member Allocation</h1>
-                    <h3>{selectedTeam} has {teamMemberCount} Members</h3>
+                    <h3>{selectedTeam} has {teamMemberCount} {teamMemberCount === 1 ? "members" : "members"}</h3>
                 </div>
             </div>
         </header>
